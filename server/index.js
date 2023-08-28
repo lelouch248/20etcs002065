@@ -1,7 +1,7 @@
 require('dotenv').config()
 const express = require("express");
 const app = express();
-port = 3000;
+port = 3001;
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const axios = require("axios");
@@ -10,18 +10,18 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cors());
 
-const trainApi = require('./external-api/train')
+const api = require('./api')
 
-async function execute() {
-  try {
-    const trains = await trainApi.listTrains()
-    console.log(JSON.stringify(trains, null, 2))
-    console.log("Still in try block")
-  } catch {
-    console.log("In catch block")
-  }
-}
-
-execute().then(() => {
-  console.log('done')
+app.get('/trains', async (req, res) => {
+  const data = await api.listTrains()
+  res.json(data)
 })
+
+app.get('/trains/:trainNumber', async (req, res) => {
+  const data = await api.getTrain(req.params.trainNumber)
+  res.json(data)
+})
+
+app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+});
