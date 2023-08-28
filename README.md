@@ -4,6 +4,8 @@ API and react
 ![searchforonetrain](https://github.com/lelouch248/20etcs002065/assets/68554363/02266156-1e15-43d5-aecd-0aa2470332ca)
 ![alltrains](https://github.com/lelouch248/20etcs002065/assets/68554363/2dbe0430-6958-4087-aacf-70654b5880ae)
 
+### Sort method implementation 
+![sortmetodimplementation](https://github.com/lelouch248/20etcs002065/assets/68554363/5fe0ed5d-323a-4cf6-9066-bc8f78ec6079)
 
 
 
