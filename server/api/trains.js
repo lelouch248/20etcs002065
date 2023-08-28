@@ -1,6 +1,8 @@
 // const testdata = require('../testdata')
 
+const MIN_TIME_WINDOW = 30 * 60
 const MAX_TIME_WINDOW = 12 * 60 * 60
+const ONE_DAY = 24 * 60 * 60
 
 function constructTimeInDaySeconds(hours, minutes, seconds) {
   return (hours * 60 * 60) + (minutes * 60) + seconds
@@ -18,16 +20,42 @@ function calculateTrainDepartureTimeInDaySeconds(departureTime, delayedBy) {
 function withinTimeWindow(currentTime, timeToCheck) {
   console.log(currentTime)
   console.log(timeToCheck)
-  if (timeToCheck - currentTime < MAX_TIME_WINDOW) {
-    return true
-  }
-  return timeToCheck - currentTime
+  const diff = timeToCheck >= currentTime ? timeToCheck - currentTime : timeToCheck + ONE_DAY - currentTime
+  return diff > MIN_TIME_WINDOW && diff <= MAX_TIME_WINDOW
 }
 
 function filterByTime(trains) {
+  const currentTime = getCurrentTimeInDaySeconds()
   return trains.filter(x => {
     const et = calculateTrainDepartureTimeInDaySeconds(x.departureTime, x.delayedBy)
+    return withinTimeWindow(currentTime, et)
   })
 }
 
-console.log(withinTimeWindow(constructTimeInDaySeconds(20, 0, 0)), constructTimeInDaySeconds(02, 0, 0))
+function sort(trains, coachTypeFilter) {
+  const presortedTrains = trains.map(x => {
+    return {
+      ...x,
+      ePrice: coachTypeFilter === "AC" ? x.price.AC : coachTypeFilter === "sleeper" ? x.price.sleeper : Math.min(x.price.AC, x.price.sleeper),
+      eSeatsAvailable: coachTypeFilter === "AC" ? x.seatsAvailable.AC : coachTypeFilter === "sleeper" ? x.seatsAvailable.sleeper : Math.max(x.seatsAvailable.AC, x.seatsAvailable.sleeper),
+      eDepartureTime: calculateTrainDepartureTimeInDaySeconds(x.departureTime, x.delayedBy)
+    }
+  })
+
+  return presortedTrains.sort((a, b) => {
+    const priceSorting = a.ePrice - b.ePrice
+    if (priceSorting !== 0)
+        return priceSorting
+
+    const ticketsSorting = b.eSeatsAvailable - a.eSeatsAvailable
+    if (ticketsSorting !== 0)
+        return ticketsSorting
+
+    return b.eDepartureTime - a.eDepartureTime
+  })
+}
+
+module.exports = {
+  filterByTime,
+  sort
+}
