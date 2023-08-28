@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Container, TextField, Button, Grid, Card, CardContent, Typography } from "@mui/material";
+import {
+  Container,
+  TextField,
+  Button,
+  Grid,
+  Card,
+  CardContent,
+  Typography,
+} from "@mui/material";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../App.css";
 import { Link } from "react-router-dom";
@@ -10,7 +18,9 @@ function SearchTrainPage() {
 
   const handleSearch = async () => {
     try {
-      const response = await fetch(`http://localhost:3001/trains/${trainNumber}`);
+      const response = await fetch(
+        `http://localhost:3001/trains/${trainNumber}`
+      );
       if (response.status === 200) {
         const data = await response.json();
         setTrainDetails(data);
@@ -52,7 +62,17 @@ function SearchTrainPage() {
           </Grid>
         </Grid>
         <Link to="/trains">
-          <Button variant="contained" color="primary" sx={{ height: "100%" }}>
+          <Button
+            variant="contained"
+            color="primary"
+            sx={{
+              height: "100%",
+              width: "100%", // Default width for non-mobile screens
+              "@media (max-width: 600px)": {
+                width: "100%", // Width for mobile screens (adjust the breakpoint as needed)
+              },
+            }}
+          >
             View All Trains
           </Button>
         </Link>
@@ -61,14 +81,22 @@ function SearchTrainPage() {
             <CardContent>
               <Typography variant="h5">{trainDetails.trainName}</Typography>
               <Typography>Train Number: {trainDetails.trainNumber}</Typography>
-              <Typography>Departure Time: {trainDetails.departureTime.Hours}:{trainDetails.departureTime.Minutes}:{trainDetails.departureTime.Seconds}</Typography>
-              <Typography>Seats Available: {trainDetails.seatsAvailable.sleeper}</Typography>
+              <Typography>
+                Departure Time: {trainDetails.departureTime.Hours}:
+                {trainDetails.departureTime.Minutes}:
+                {trainDetails.departureTime.Seconds}
+              </Typography>
+              <Typography>
+                Seats Available: {trainDetails.seatsAvailable.sleeper}
+              </Typography>
               <Typography>Price: {trainDetails.price.sleeper}</Typography>
               <Typography>Delayed By: {trainDetails.delayedBy}</Typography>
             </CardContent>
           </Card>
         ) : (
-          <Typography className="mt-3">No train found for the given number.</Typography>
+          <Typography className="mt-3">
+            No train found for the given number.
+          </Typography>
         )}
       </Container>
     </div>
